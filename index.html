@@ -17,29 +17,13 @@
       padding: 0;
     }
 
-    /* Loading Spinner */
-    .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     /* Auth Styles */
     .auth-body {
       background: #f5f6fa;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
     }
       
     .auth-container {
@@ -52,17 +36,16 @@
     }
 
     .login-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ffeb3b, #ff9800, #f44336);
     }
 
     .register-bg {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #ff69b4, #3f51b5);
     }
 
     .auth-container h2 {
       text-align: center;
       margin-bottom: 20px;
-      font-weight: 600;
     }
 
     .auth-container form {
@@ -80,13 +63,6 @@
       border-radius: 8px;
       outline: none;
       color: #333;
-      background: rgba(255,255,255,0.9);
-      transition: background 0.3s ease;
-    }
-
-    .auth-container input:focus,
-    .auth-container textarea:focus {
-      background: rgba(255,255,255,1);
     }
 
     .auth-container textarea {
@@ -97,24 +73,17 @@
     .auth-container button {
       padding: 12px;
       background: #ffffff;
-      color: #333;
+      color: #d84315;
       font-weight: bold;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
 
     .auth-container button:hover {
-      background: #f8f9fa;
-      transform: translateY(-2px);
-    }
-
-    .auth-container button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+      background: #fbe9e7;
     }
 
     .link {
@@ -128,45 +97,30 @@
       color: #fff;
       text-decoration: underline;
       cursor: pointer;
-      transition: opacity 0.3s ease;
-    }
-
-    .link a:hover {
-      opacity: 0.8;
     }
 
     .hidden {
       display: none;
     }
 
-    .alert {
+    #error, #success {
       text-align: center;
       font-size: 14px;
       margin-top: 10px;
-      padding: 8px 12px;
-      border-radius: 6px;
     }
 
-    .alert-error {
-      background: rgba(255, 107, 107, 0.9);
-      color: #fff;
+    #error {
+      color: #ff6b6b;
     }
 
-    .alert-success {
-      background: rgba(81, 207, 102, 0.9);
-      color: #fff;
+    #success {
+      color: #51cf66;
     }
 
     /* Main App Styles */
     .card {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      border-radius: 12px;
-      border: none;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-radius: 10px;
     }
 
     .card h5 {
@@ -177,88 +131,38 @@
       vertical-align: middle;
     }
 
-    /* Dashboard Cards */
-    .stats-card {
-      background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-      color: white;
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      transition: transform 0.3s ease;
-    }
-
-    .stats-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .stats-card-primary { --card-color-1: #667eea; --card-color-2: #764ba2; }
-    .stats-card-success { --card-color-1: #11998e; --card-color-2: #38ef7d; }
-    .stats-card-warning { --card-color-1: #f093fb; --card-color-2: #f5576c; }
-    .stats-card-info { --card-color-1: #4facfe; --card-color-2: #00f2fe; }
-
-    /* Client & Invoice Styles */
-    .client-container, .invoice-container {
+    /* Client Styles */
+    .client-container {
       background: #fff;
-      border-radius: 15px;
+      border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .client-container h2, .invoice-container h2 {
+    .client-container h2 {
       text-align: center;
       margin-bottom: 25px;
-      color: #2c3e50;
-      font-weight: 600;
+      color: #343a40;
     }
 
-    .form-control:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #11998e, #38ef7d);
-      border: none;
+    .client-form .form-control,
+    .client-form .btn {
       border-radius: 8px;
     }
 
-    .btn-danger {
-      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-      border: none;
-      border-radius: 8px;
+    .client-form textarea {
+      resize: none;
     }
 
-    .btn-info {
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      border: none;
-      border-radius: 8px;
+    .client-table th,
+    .client-table td {
+      vertical-align: middle;
+      text-align: center;
     }
 
-    /* Table Styles */
-    .table thead th {
-      background: linear-gradient(135deg, #2c3e50, #34495e);
+    .client-table thead {
+      background-color: #343a40;
       color: white;
-      border: none;
-      font-weight: 500;
-    }
-
-    .table tbody tr:hover {
-      background-color: #f8f9fa;
     }
 
     /* Invoice Styles */
@@ -282,210 +186,157 @@
     }
 
     .form-box {
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      margin-bottom: 20px;
+      padding: 10px;
     }
 
     .form-input {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin-bottom: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-
-    .form-input:focus {
-      border-color: #667eea;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
     }
 
     .line-item {
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
-      align-items: center;
     }
 
     .btn-outline {
       background-color: white;
-      border: 2px solid #667eea;
-      color: #667eea;
+      border: 1px solid #3498db;
+      color: #3498db;
       padding: 10px 20px;
       font-size: 14px;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
 
     .btn-outline:hover {
-      background-color: #667eea;
+      background-color: #ecf5fc;
+    }
+
+    /* Invoice History Styles */
+    .invoice-container {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .invoice-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #343a40;
+    }
+
+    .invoice-table thead {
+      background-color: #343a40;
+      color: #fff;
+      text-align: center;
+    }
+
+    .invoice-table td,
+    .invoice-table th {
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .btn-group .btn {
+      margin-right: 5px;
+    }
+
+    .btn-template {
+      background-color: #6c757d;
       color: white;
+    }
+
+    .btn-template:hover {
+      background-color: #5a6268;
     }
 
     /* Invoice Detail Styles */
     .invoice-box {
       background: #fff;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       max-width: 900px;
       margin: auto;
     }
 
     .invoice-box h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       color: #2c3e50;
-      font-weight: 600;
-      font-size: 28px;
     }
 
     .invoice-box h4 {
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       color: #34495e;
-      font-weight: 500;
     }
 
     .info-section {
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
-      gap: 20px;
     }
 
     .info-box {
-      flex: 1;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 10px;
+      width: 48%;
     }
 
     .invoice-box table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .invoice-box table thead {
-      background: linear-gradient(135deg, #2c3e50, #34495e);
+      background-color: #2c3e50;
       color: #fff;
     }
 
-    .invoice-box th, .invoice-box td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
+    .invoice-box table, .invoice-box th, .invoice-box td {
+      border: 1px solid #ccc;
     }
 
-    .invoice-box tbody tr:hover {
-      background-color: #f8f9fa;
+    .invoice-box th, .invoice-box td {
+      padding: 10px;
+      text-align: left;
     }
 
     .summary {
       text-align: right;
       font-size: 16px;
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
     }
 
     .summary p {
-      margin: 8px 0;
-      font-weight: 500;
-    }
-
-    .summary p:last-child {
-      font-size: 18px;
-      color: #2c3e50;
-      font-weight: 600;
-      border-top: 2px solid #667eea;
-      padding-top: 10px;
+      margin: 6px 0;
     }
 
     .btn-download {
       display: inline-block;
-      padding: 12px 25px;
+      padding: 10px 20px;
       margin-top: 20px;
-      background: linear-gradient(135deg, #11998e, #38ef7d);
+      background-color: #28a745;
       color: white;
-      border-radius: 8px;
+      border-radius: 5px;
       text-decoration: none;
       cursor: pointer;
       border: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
     }
 
     .btn-download:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
-      color: white;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .auth-container {
-        width: 90%;
-        margin: 20px;
-      }
-
-      .info-section {
-        flex-direction: column;
-      }
-
-      .line-item {
-        flex-wrap: wrap;
-      }
-
-      .line-item .col {
-        min-width: 150px;
-      }
+      background-color: #218838;
     }
 
     @media print {
-      .btn-download, nav, .no-print, .btn {
+      .btn-download, nav, .no-print {
         display: none !important;
       }
-      
-      .invoice-box {
-        box-shadow: none;
-        padding: 20px;
-      }
-      
-      body {
-        background: white;
-      }
-    }
-
-    /* Navbar Enhancement */
-    .navbar-dark .navbar-brand {
-      font-weight: 600;
-      font-size: 1.3rem;
-    }
-
-    .navbar-dark .nav-link:hover {
-      color: #fff !important;
-      background-color: rgba(255,255,255,0.1);
-      border-radius: 5px;
-    }
-
-    /* Animation for page transitions */
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -496,18 +347,13 @@
     <!-- LOGIN FORM -->
     <div class="auth-container login-bg" id="loginBox">
       <form id="loginForm" onsubmit="login(event)">
-        <h2>Welcome Back</h2>
-        <input type="email" id="username" placeholder="Email Address" required />
+        <h2>Login</h2>
+        <input type="email" id="username" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
-        <button type="submit" id="loginBtn">
-          <span class="btn-text">Sign In</span>
-          <span class="spinner hidden"></span>
-        </button>
+        <button type="submit">Login</button>
         <div id="error"></div>
         <div id="success"></div>
-        <div class="link">
-          <small>Demo: demo@example.com / demo123</small>
-        </div>
+        <div class="link"><a onclick="showForgot()">Forgot Password?</a></div>
         <div class="link">Don't have an account? <a onclick="showRegister()">Sign up</a></div>
       </form>
     </div>
@@ -515,19 +361,28 @@
     <!-- REGISTER FORM -->
     <div class="auth-container register-bg hidden" id="registerBox">
       <form id="registerForm" onsubmit="register(event)">
-        <h2>Create Account</h2>
+        <h2>Register</h2>
         <input type="text" id="registerName" placeholder="Full Name" required />
-        <input type="email" id="registerEmail" placeholder="Email Address" required />
-        <input type="password" id="registerPassword" placeholder="Password (min 6 chars)" required minlength="6" />
-        <input type="text" id="contactNumber" placeholder="Contact Number" required />
-        <textarea id="address" placeholder="Address" required rows="3"></textarea>
-        <button type="submit" id="registerBtn">
-          <span class="btn-text">Create Account</span>
-          <span class="spinner hidden"></span>
-        </button>
+        <input type="email" id="registerEmail" placeholder="Email" required />
+        <input type="password" id="registerPassword" placeholder="Password" required minlength="6" />
+        <input type="text" id="contactNumber" placeholder="Contact Number" required maxlength="10" />
+        <textarea id="address" placeholder="Address" required></textarea>
+        <button type="submit">Sign Up</button>
         <div id="registerError"></div>
         <div id="registerSuccess"></div>
-        <div class="link">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+        <div class="link">Already have an account? <a onclick="showLogin()">Login</a></div>
+      </form>
+    </div>
+
+    <!-- FORGOT PASSWORD FORM -->
+    <div class="auth-container login-bg hidden" id="forgotBox">
+      <form id="forgotForm" onsubmit="forgotPassword(event)">
+        <h2>Reset Password</h2>
+        <input type="email" id="forgotEmail" placeholder="Enter your email" required />
+        <button type="submit">Send Reset Link</button>
+        <div id="forgotError"></div>
+        <div id="forgotSuccess"></div>
+        <div class="link"><a onclick="showLogin()">Back to Login</a></div>
       </form>
     </div>
   </div>
@@ -535,93 +390,80 @@
   <!-- MAIN APPLICATION SECTION -->
   <div id="mainApp" class="hidden">
     <!-- NAVIGATION -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark no-print sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark no-print">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" onclick="showDashboard()">
-          📊 Invoice Manager
-        </a>
+        <a class="navbar-brand" href="#" onclick="showDashboard()">Invoice Manager</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link" href="#" onclick="showDashboard()">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="showNewInvoice()">New Invoice</a></li>
-            <li class="nav-item"><a class="nav-link" href="#" onclick="showInvoiceHistory()">Invoices</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showInvoiceHistory()">Invoice History</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="showClients()">Clients</a></li>
           </ul>
-          <span class="navbar-text me-3">
-            👤 <strong id="currentUserName">User</strong>
-          </span>
+          <span class="navbar-text me-3">Logged in as <strong id="currentUserName">User</strong></span>
           <button class="btn btn-outline-light" onclick="logout()">Logout</button>
         </div>
       </div>
     </nav>
 
     <!-- DASHBOARD -->
-    <div id="dashboardSection" class="container mt-4 fade-in">
-      <h2 class="text-center mb-4 text-dark">Dashboard Overview</h2>
-      
+    <div id="dashboardSection" class="container mt-4">
       <div class="row g-4 mb-4">
         <div class="col-md-3">
-          <div class="stats-card stats-card-primary">
+          <div class="card p-3 text-center bg-primary text-white">
             <h5>Total Clients</h5>
             <h2 id="totalClients">0</h2>
-            <small>Active clients</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="stats-card stats-card-success">
+          <div class="card p-3 text-center bg-success text-white">
             <h5>Total Invoices</h5>
             <h2 id="totalInvoices">0</h2>
-            <small>Generated invoices</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="stats-card stats-card-warning">
-            <h5>Total Tax</h5>
+          <div class="card p-3 text-center bg-warning text-dark">
+            <h5>Total Tax Paid</h5>
             <h2 id="totalTax">₹0</h2>
-            <small>Tax collected</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="stats-card stats-card-info">
+          <div class="card p-3 text-center bg-info text-white">
             <h5>Total Revenue</h5>
             <h2 id="totalRevenue">₹0</h2>
-            <small>Total earnings</small>
           </div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-header bg-dark text-white">
-          <h5 class="mb-0">📈 Client Summary</h5>
+          Active Clients & Payments
         </div>
         <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover m-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Client Name</th>
-                  <th>Email</th>
-                  <th>Total Invoices</th>
-                  <th>Total Amount Paid</th>
-                </tr>
-              </thead>
-              <tbody id="clientSummaryTable">
-                <tr><td colspan="4" class="text-center text-muted">No clients yet</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <table class="table table-striped m-0">
+            <thead class="table-light">
+              <tr>
+                <th>Client Name</th>
+                <th>Email</th>
+                <th>Total Invoices</th>
+                <th>Total Amount Paid</th>
+              </tr>
+            </thead>
+            <tbody id="clientSummaryTable">
+              <tr><td colspan="4" class="text-center">No clients yet</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <!-- CLIENTS SECTION -->
-    <div id="clientsSection" class="container mt-4 hidden fade-in">
+    <div id="clientsSection" class="container mt-4 hidden">
       <div class="client-container">
-        <h2>👥 Client Management</h2>
+        <h2>Clients</h2>
 
         <form id="clientForm" class="client-form mb-4">
           <div class="row g-3">
@@ -629,34 +471,29 @@
               <input name="name" class="form-control" placeholder="Client Name" required>
             </div>
             <div class="col-md-3">
-              <input name="email" type="email" class="form-control" placeholder="Email Address" required>
+              <input name="email" type="email" class="form-control" placeholder="Email" required>
             </div>
             <div class="col-md-4">
-              <textarea name="address" class="form-control" placeholder="Complete Address" rows="1" required></textarea>
+              <textarea name="address" class="form-control" placeholder="Address" rows="1" required></textarea>
             </div>
             <div class="col-md-2 d-grid">
-              <button type="submit" class="btn btn-success" id="addClientBtn">
-                <span class="btn-text">Add Client</span>
-                <span class="spinner hidden"></span>
-              </button>
+              <button type="submit" class="btn btn-success">Add Client</button>
             </div>
           </div>
         </form>
 
         <div class="table-responsive">
-          <table class="table table-bordered table-hover">
+          <table class="table table-bordered table-hover client-table">
             <thead>
               <tr>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Address</th>
-                <th>Invoices</th>
-                <th>Total Paid</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="clientsTable">
-              <tr><td colspan="6" class="text-center text-muted">No clients yet</td></tr>
+              <tr><td colspan="4" class="text-center">No clients yet</td></tr>
             </tbody>
           </table>
         </div>
@@ -664,83 +501,59 @@
     </div>
 
     <!-- NEW INVOICE SECTION -->
-    <div id="newInvoiceSection" class="container mt-4 hidden fade-in">
+    <div id="newInvoiceSection" class="container mt-4 hidden">
       <div class="client-container">
-        <h2 class="section-title">📄 Create New Invoice</h2>
+        <h2 class="section-title">Create New Invoice</h2>
 
         <form id="invoiceForm" class="form-section">
           <div class="row">
-            <div class="col-md-6">
-              <div class="form-box">
-                <h5 class="sub-title">Your Information</h5>
-                <input type="text" name="freelancer_name" class="form-input" placeholder="Your Full Name" required>
-                <input type="email" name="freelancer_email" class="form-input" placeholder="Your Email Address" required>
-                <textarea name="freelancer_address" class="form-input" rows="3" placeholder="Your Complete Address" required></textarea>
-              </div>
+            <div class="col-md-6 form-box">
+              <h5 class="sub-title">Freelancer Info</h5>
+              <input type="text" name="freelancer_name" class="form-input" placeholder="Your Name" required>
+              <input type="email" name="freelancer_email" class="form-input" placeholder="Your Email" required>
+              <textarea name="freelancer_address" class="form-input" rows="3" placeholder="Your Address" required></textarea>
             </div>
 
-            <div class="col-md-6">
-              <div class="form-box">
-                <h5 class="sub-title">Client Information</h5>
-                <select name="client_id" class="form-input" required id="clientSelect">
-                  <option disabled selected>Select Client</option>
-                </select>
-                <div class="mt-2">
-                  <small class="text-muted">Don't see your client? <a href="#" onclick="showClients()" class="text-primary">Add them first</a></small>
-                </div>
-              </div>
+            <div class="col-md-6 form-box">
+              <h5 class="sub-title">Client Info</h5>
+              <select name="client_id" class="form-input" required id="clientSelect">
+                <option disabled selected>Select Client</option>
+              </select>
             </div>
           </div>
 
-          <div class="form-box">
-            <h5 class="sub-title mt-4">📝 Invoice Items</h5>
-            <div id="items">
-              <div class="row line-item">
-                <div class="col">
-                  <input name="description" class="form-input" placeholder="Item Description" required>
-                </div>
-                <div class="col">
-                  <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
-                </div>
-                <div class="col">
-                  <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
-                </div>
-                <div class="col-auto">
-                  <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
-                </div>
-              </div>
-            </div>
-
-            <button type="button" onclick="addItem()" class="btn-outline mb-3">+ Add Another Item</button>
-
-            <div class="row">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Tax Percentage (%)</label>
-                <input type="number" step="0.01" name="tax_percent" class="form-input" placeholder="e.g., 18" min="0" max="100" required>
-              </div>
+          <h5 class="sub-title mt-4">Line Items</h5>
+          <div id="items">
+            <div class="row line-item">
+              <div class="col"><input name="description" class="form-input" placeholder="Description" required></div>
+              <div class="col"><input type="number" name="quantity" class="form-input" placeholder="Qty" required></div>
+              <div class="col"><input type="number" step="0.01" name="price" class="form-input" placeholder="Price" required></div>
+              <div class="col-auto"><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button></div>
             </div>
           </div>
 
-          <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg" id="createInvoiceBtn">
-              <span class="btn-text">📄 Create Invoice</span>
-              <span class="spinner hidden"></span>
-            </button>
+          <button type="button" onclick="addItem()" class="btn btn-outline mb-3">+ Add Item</button>
+
+          <div class="form-group">
+            <label class="form-label">Tax Percentage (%)</label>
+            <input type="number" step="0.01" name="tax_percent" class="form-input" placeholder="e.g. 18" required>
           </div>
+
+          <button type="submit" class="btn btn-primary">Create Invoice</button>
         </form>
       </div>
     </div>
 
     <!-- INVOICE HISTORY SECTION -->
-    <div id="invoiceHistorySection" class="container mt-4 hidden fade-in">
+    <div id="invoiceHistorySection" class="container mt-4 hidden">
       <div class="invoice-container">
-        <h2>📋 Invoice History</h2>
+        <h2>Invoice History</h2>
 
         <div class="table-responsive">
-          <table class="table table-bordered table-hover">
+          <table class="table table-bordered table-striped invoice-table">
             <thead>
               <tr>
-                <th>Invoice #</th>
+                <th>#</th>
                 <th>Client</th>
                 <th>Date</th>
                 <th>Tax (%)</th>
@@ -749,7 +562,7 @@
               </tr>
             </thead>
             <tbody id="invoiceHistoryTable">
-              <tr><td colspan="6" class="text-center text-muted">No invoices yet</td></tr>
+              <tr><td colspan="6" class="text-center">No invoices yet</td></tr>
             </tbody>
           </table>
         </div>
@@ -757,28 +570,28 @@
     </div>
 
     <!-- INVOICE DETAIL SECTION -->
-    <div id="invoiceDetailSection" class="container mt-4 hidden fade-in">
+    <div id="invoiceDetailSection" class="container mt-4 hidden">
       <div class="invoice-box">
-        <h2>📄 Invoice Details</h2>
+        <h2>Invoice</h2>
 
         <div class="info-section">
           <div class="info-box">
-            <h4>From:</h4>
-            <div id="invoiceFreelancerInfo">
+            <h4>Freelancer:</h4>
+            <p id="invoiceFreelancerInfo">
               <!-- Dynamic content -->
-            </div>
+            </p>
           </div>
           <div class="info-box">
-            <h4>To:</h4>
-            <div id="invoiceClientInfo">
+            <h4>Client:</h4>
+            <p id="invoiceClientInfo">
               <!-- Dynamic content -->
-            </div>
+            </p>
           </div>
         </div>
 
-        <div class="info-box mb-4">
+        <div>
           <h4>Invoice Date:</h4>
-          <p id="invoiceDate" class="mb-0"><!-- Dynamic content --></p>
+          <p id="invoiceDate"><!-- Dynamic content --></p>
         </div>
 
         <div>
@@ -787,8 +600,8 @@
             <thead>
               <tr>
                 <th>Description</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
+                <th>Qty</th>
+                <th>Price</th>
                 <th>Total</th>
               </tr>
             </thead>
@@ -802,10 +615,8 @@
           <!-- Dynamic content -->
         </div>
 
-        <div class="text-center mt-4 no-print">
-          <button onclick="printInvoice()" class="btn-download me-2">🖨️ Print Invoice</button>
-          <button onclick="showInvoiceHistory()" class="btn btn-secondary">← Back to History</button>
-        </div>
+        <button onclick="printInvoice()" class="btn-download no-print">Print Invoice</button>
+        <button onclick="showInvoiceHistory()" class="btn btn-secondary no-print ms-2">Back to History</button>
       </div>
     </div>
   </div>
@@ -815,87 +626,35 @@
     // Global variables
     let clients = [];
     let invoices = [];
-    let currentUser = null;
-    let authToken = null;
+    let currentInvoiceId = 0;
+    let users = []; // Store registered users
+    let currentUser = null; // Store logged in user
 
-    // API Base URL - automatically detects if running locally or on server
-    const API_BASE_URL = window.location.origin;
+    // LocalStorage keys
+    const STORAGE_KEYS = {
+      USERS: 'invoice_manager_users',
+      USER_DATA: 'invoice_manager_user_data_'
+    };
 
-    // Utility functions
-    function showLoading(buttonId) {
-      const button = document.getElementById(buttonId);
-      const btnText = button.querySelector('.btn-text');
-      const spinner = button.querySelector('.spinner');
-      
-      btnText.style.display = 'none';
-      spinner.classList.remove('hidden');
-      button.disabled = true;
-    }
-
-    function hideLoading(buttonId, originalText = null) {
-      const button = document.getElementById(buttonId);
-      const btnText = button.querySelector('.btn-text');
-      const spinner = button.querySelector('.spinner');
-      
-      if (originalText) btnText.textContent = originalText;
-      btnText.style.display = 'inline';
-      spinner.classList.add('hidden');
-      button.disabled = false;
-    }
-
-    function showAlert(elementId, message, type = 'error') {
-      const element = document.getElementById(elementId);
-      if (!element) return;
-      element.textContent = message;
-      element.className = `alert alert-${type}`;
-      element.style.display = 'block';
-      
-      // Auto-hide after 5 seconds
-      setTimeout(() => {
-        element.style.display = 'none';
-      }, 5000);
-    }
-
-    function clearAlerts() {
-      const alertIds = ['error', 'success', 'registerError', 'registerSuccess'];
-      alertIds.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.style.display = 'none';
-          element.textContent = '';
-        }
-      });
-    }
-
-    // API functions
-    async function apiCall(endpoint, method = 'GET', data = null) {
-      const config = {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      };
-
-      if (authToken) {
-        config.headers.Authorization = `Bearer ${authToken}`;
-      }
-
-      if (data) {
-        config.body = JSON.stringify(data);
-      }
-
+    // Load users from localStorage
+    function loadUsers() {
       try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-        const result = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(result.error || 'API request failed');
+        const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+        if (storedUsers) {
+          users = JSON.parse(storedUsers);
         }
-        
-        return result;
       } catch (error) {
-        console.error('API Error:', error);
-        throw error;
+        console.error('Error loading users:', error);
+        users = [];
+      }
+    }
+
+    // Save users to localStorage
+    function saveUsers() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      } catch (error) {
+        console.error('Error saving users:', error);
       }
     }
 
@@ -904,149 +663,231 @@
     const mainApp = document.getElementById("mainApp");
     const loginBox = document.getElementById("loginBox");
     const registerBox = document.getElementById("registerBox");
+    const forgotBox = document.getElementById("forgotBox");
 
     function showRegister() {
       loginBox.classList.add("hidden");
       registerBox.classList.remove("hidden");
-      clearAlerts();
+      forgotBox.classList.add("hidden");
+      clearMessages();
     }
 
     function showLogin() {
       loginBox.classList.remove("hidden");
       registerBox.classList.add("hidden");
-      clearAlerts();
+      forgotBox.classList.add("hidden");
+      clearMessages();
     }
 
-    async function register(e) {
+    function showForgot() {
+      loginBox.classList.add("hidden");
+      registerBox.classList.add("hidden");
+      forgotBox.classList.remove("hidden");
+      clearMessages();
+    }
+
+    function clearMessages() {
+      document.getElementById("error").textContent = "";
+      document.getElementById("success").textContent = "";
+      document.getElementById("registerError").textContent = "";
+      document.getElementById("registerSuccess").textContent = "";
+      document.getElementById("forgotError").textContent = "";
+      document.getElementById("forgotSuccess").textContent = "";
+    }
+
+    function register(e) {
       e.preventDefault();
-      showLoading('registerBtn');
-      
-      const formData = new FormData(e.target);
-      const userData = {
-        name: formData.get('registerName') || document.getElementById('registerName').value,
-        email: formData.get('registerEmail') || document.getElementById('registerEmail').value,
-        password: formData.get('registerPassword') || document.getElementById('registerPassword').value,
-        contactNumber: formData.get('contactNumber') || document.getElementById('contactNumber').value,
-        address: formData.get('address') || document.getElementById('address').value
+      const name = document.getElementById("registerName").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      const contact = document.getElementById("contactNumber").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      // Validation
+      if (!/^[a-zA-Z\s]+$/.test(name)) {
+        document.getElementById("registerError").textContent = "Name must contain only alphabets and spaces.";
+        return;
+      }
+      if (!/^\d{10}$/.test(contact)) {
+        document.getElementById("registerError").textContent = "Contact number must be exactly 10 digits.";
+        return;
+      }
+      if (password.length < 6) {
+        document.getElementById("registerError").textContent = "Password must be at least 6 characters long.";
+        return;
+      }
+
+      // Check if email already exists
+      if (users.find(user => user.email === email)) {
+        document.getElementById("registerError").textContent = "Email already registered. Please use a different email.";
+        return;
+      }
+
+      // Create new user
+      const newUser = {
+        id: users.length + 1,
+        name: name,
+        email: email,
+        password: password, // In a real app, this should be hashed
+        contact: contact,
+        address: address,
+        registeredAt: new Date()
       };
 
-      try {
-        const response = await apiCall('/api/auth/register', 'POST', userData);
-        showAlert('registerSuccess', 'Registration successful! You can now login.', 'success');
-        document.getElementById('registerForm').reset();
-        
-        // Auto switch to login after 2 seconds
-        setTimeout(() => {
-          showLogin();
-        }, 2000);
-      } catch (error) {
-        showAlert('registerError', error.message || 'Registration failed. Please try again.');
-      } finally {
-        hideLoading('registerBtn');
-      }
+      users.push(newUser);
+      saveUsers(); // Save to localStorage
+      
+      document.getElementById("registerSuccess").textContent = "Registration successful! You can now login.";
+      document.getElementById("registerError").textContent = "";
+      document.getElementById("registerForm").reset();
+      
+      // Auto switch to login after 2 seconds
+      setTimeout(() => {
+        showLogin();
+      }, 2000);
     }
 
-    async function login(e) {
+    function login(e) {
       e.preventDefault();
-      showLoading('loginBtn');
-      
       const email = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
+      const errorBox = document.getElementById("error");
 
-      try {
-        const response = await apiCall('/api/auth/login', 'POST', { email, password });
-        
-        currentUser = response.user;
-        authToken = response.token;
-        
+      // Find user
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        currentUser = user;
         authSection.classList.add("hidden");
         mainApp.classList.remove("hidden");
         document.body.classList.remove("auth-body");
         
         // Update navbar with user name
-        document.getElementById("currentUserName").textContent = currentUser.name;
+        document.getElementById("currentUserName").textContent = user.name;
         
-        // Load user data
-        await loadAllData();
+        // Load user-specific data
+        loadUserData();
         showDashboard();
+        updateDashboard();
         
-      } catch (error) {
-        showAlert('error', error.message || 'Login failed. Please check your credentials.');
-      } finally {
-        hideLoading('loginBtn');
+        document.getElementById("success").textContent = "Login successful!";
+        errorBox.textContent = "";
+      } else {
+        errorBox.textContent = "Invalid email or password. Please check your credentials.";
+        document.getElementById("success").textContent = "";
+      }
+    }
+
+    function forgotPassword(e) {
+      e.preventDefault();
+      const email = document.getElementById("forgotEmail").value.trim();
+      
+      const user = users.find(u => u.email === email);
+      if (user) {
+        document.getElementById("forgotSuccess").textContent = `Password reset instructions sent to ${email}`;
+        document.getElementById("forgotError").textContent = "";
+        // In a real app, you would send an actual email here
+      } else {
+        document.getElementById("forgotError").textContent = "Email not found. Please register first.";
+        document.getElementById("forgotSuccess").textContent = "";
       }
     }
 
     function logout() {
-      currentUser = null;
-      authToken = null;
+      // Save user-specific data before logout
+      saveUserData();
       
+      currentUser = null;
       authSection.classList.remove("hidden");
       mainApp.classList.add("hidden");
       document.body.classList.add("auth-body");
       showLogin();
-      clearAlerts();
+      clearMessages();
       
-      // Reset forms and data
+      // Reset forms
       document.getElementById("loginForm").reset();
-      clients = [];
-      invoices = [];
     }
 
-    // Data loading functions
-    async function loadAllData() {
+    function loadUserData() {
+      if (!currentUser) return;
+      
       try {
-        await Promise.all([
-          loadClients(),
-          loadInvoices(),
-          loadDashboardData()
-        ]);
+        const userDataKey = STORAGE_KEYS.USER_DATA + currentUser.id;
+        const storedData = localStorage.getItem(userDataKey);
+        
+        if (storedData) {
+          const userData = JSON.parse(storedData);
+          clients = userData.clients || [];
+          invoices = userData.invoices || [];
+          currentInvoiceId = userData.currentInvoiceId || 0;
+          
+          // Convert date strings back to Date objects
+          invoices.forEach(invoice => {
+            if (typeof invoice.createdAt === 'string') {
+              invoice.createdAt = new Date(invoice.createdAt);
+            }
+          });
+        } else {
+          // Initialize empty data for new user
+          clients = [];
+          invoices = [];
+          currentInvoiceId = 0;
+        }
       } catch (error) {
-        console.error('Error loading data:', error);
-      }
-    }
-
-    async function loadClients() {
-      try {
-        clients = await apiCall('/api/clients');
-        updateClientsTable();
-        updateClientSelect();
-      } catch (error) {
-        console.error('Error loading clients:', error);
+        console.error('Error loading user data:', error);
         clients = [];
-      }
-    }
-
-    async function loadInvoices() {
-      try {
-        invoices = await apiCall('/api/invoices');
-        updateInvoiceHistoryTable();
-      } catch (error) {
-        console.error('Error loading invoices:', error);
         invoices = [];
+        currentInvoiceId = 0;
       }
     }
 
-    async function loadDashboardData() {
+    function saveUserData() {
+      if (!currentUser) return;
+      
       try {
-        const dashboardData = await apiCall('/api/dashboard');
-        updateDashboard(dashboardData);
+        const userDataKey = STORAGE_KEYS.USER_DATA + currentUser.id;
+        const userData = {
+          clients: clients,
+          invoices: invoices,
+          currentInvoiceId: currentInvoiceId,
+          lastSaved: new Date().toISOString()
+        };
+        localStorage.setItem(userDataKey, JSON.stringify(userData));
       } catch (error) {
-        console.error('Error loading dashboard data:', error);
+        console.error('Error saving user data:', error);
       }
     }
+
+    // Remove the old userDataStore functions since we're using localStorage now
+
+    // Name validation — allow only letters and spaces
+    const nameInput = document.getElementById("registerName");
+    nameInput?.addEventListener("input", function () {
+      const valid = /^[a-zA-Z\s]*$/.test(this.value);
+      if (!valid) {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
+      }
+    });
+
+    // Contact validation — allow only numbers
+    const contactInput = document.getElementById("contactNumber");
+    contactInput?.addEventListener("input", function () {
+      const valid = /^[0-9]*$/.test(this.value);
+      if (!valid) {
+        this.value = this.value.replace(/[^0-9]/g, "");
+      }
+    });
 
     // Navigation functions
     function showDashboard() {
       hideAllSections();
       document.getElementById("dashboardSection").classList.remove("hidden");
-      loadDashboardData();
     }
 
     function showClients() {
       hideAllSections();
       document.getElementById("clientsSection").classList.remove("hidden");
-      loadClients();
+      updateClientsTable();
     }
 
     function showNewInvoice() {
@@ -1058,7 +899,7 @@
     function showInvoiceHistory() {
       hideAllSections();
       document.getElementById("invoiceHistorySection").classList.remove("hidden");
-      loadInvoices();
+      updateInvoiceHistoryTable();
     }
 
     function showInvoiceDetail(invoiceId) {
@@ -1075,33 +916,30 @@
     }
 
     // Client management
-    document.getElementById("clientForm").addEventListener("submit", async function(e) {
+    document.getElementById("clientForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      showLoading('addClientBtn');
-      
       const formData = new FormData(e.target);
-      const clientData = {
+      const client = {
+        id: clients.length + 1,
         name: formData.get("name"),
         email: formData.get("email"),
-        address: formData.get("address")
+        address: formData.get("address"),
+        invoiceCount: 0,
+        totalPaid: 0
       };
 
-      try {
-        const response = await apiCall('/api/clients', 'POST', clientData);
-        e.target.reset();
-        await loadClients();
-        await loadDashboardData();
-      } catch (error) {
-        showAlert('error', error.message || 'Failed to add client');
-      } finally {
-        hideLoading('addClientBtn');
-      }
+      clients.push(client);
+      e.target.reset();
+      updateClientsTable();
+      updateDashboard();
+      saveUserData();
+      alert("Client added successfully!");
     });
 
     function updateClientsTable() {
       const tbody = document.getElementById("clientsTable");
       if (clients.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No clients yet</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No clients yet</td></tr>';
         return;
       }
 
@@ -1110,26 +948,20 @@
           <td>${client.name}</td>
           <td>${client.email}</td>
           <td>${client.address}</td>
-          <td><span class="badge bg-primary">${client.invoiceCount || 0}</span></td>
-          <td><strong>₹${(client.totalPaid || 0).toFixed(2)}</strong></td>
           <td>
-            <button class="btn btn-sm btn-danger" onclick="deleteClient(${client.id})">
-              Delete
-            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteClient(${client.id})">Delete</button>
           </td>
         </tr>
       `).join("");
     }
 
-    async function deleteClient(clientId) {
-      if (confirm("Are you sure you want to delete this client? This will also delete all related invoices.")) {
-        try {
-          await apiCall(`/api/clients/${clientId}`, 'DELETE');
-          await loadClients();
-          await loadDashboardData();
-        } catch (error) {
-          showAlert('error', error.message || 'Failed to delete client');
-        }
+    function deleteClient(clientId) {
+      if (confirm("Are you sure you want to delete this client?")) {
+        clients = clients.filter(c => c.id !== clientId);
+        updateClientsTable();
+        updateDashboard();
+        updateClientSelect();
+        saveUserData();
       }
     }
 
@@ -1142,10 +974,8 @@
     }
 
     // Invoice management
-    document.getElementById("invoiceForm").addEventListener("submit", async function(e) {
+    document.getElementById("invoiceForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      showLoading('createInvoiceBtn');
-      
       const formData = new FormData(e.target);
       
       // Get all line items
@@ -1157,76 +987,69 @@
         const quantity = parseFloat(row.querySelector('input[name="quantity"]').value);
         const price = parseFloat(row.querySelector('input[name="price"]').value);
         
-        if (description && quantity && price) {
-          lineItems.push({
-            description: description,
-            quantity: quantity,
-            price: price
-          });
-        }
+        lineItems.push({
+          description: description,
+          quantity: quantity,
+          price: price
+        });
       });
 
-      if (lineItems.length === 0) {
-        showAlert('error', 'Please add at least one valid line item');
-        hideLoading('createInvoiceBtn');
+      const clientId = parseInt(formData.get("client_id"));
+      const client = clients.find(c => c.id === clientId);
+      
+      if (!client) {
+        alert("Please select a valid client");
         return;
       }
 
-      const invoiceData = {
+      const subtotal = lineItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+      const taxPercent = parseFloat(formData.get("tax_percent"));
+      const taxAmount = (subtotal * taxPercent) / 100;
+      const total = subtotal + taxAmount;
+
+      const invoice = {
+        id: ++currentInvoiceId,
         freelancerName: formData.get("freelancer_name"),
         freelancerEmail: formData.get("freelancer_email"),
         freelancerAddress: formData.get("freelancer_address"),
-        clientId: parseInt(formData.get("client_id")),
+        client: client,
         lineItems: lineItems,
-        taxPercent: parseFloat(formData.get("tax_percent"))
+        taxPercent: taxPercent,
+        subtotal: subtotal,
+        taxAmount: taxAmount,
+        total: total,
+        createdAt: new Date()
       };
 
-      try {
-        const response = await apiCall('/api/invoices', 'POST', invoiceData);
-        e.target.reset();
-        
-        // Reset line items to default
-        document.getElementById("items").innerHTML = `
-          <div class="row line-item">
-            <div class="col">
-              <input name="description" class="form-input" placeholder="Item Description" required>
-            </div>
-            <div class="col">
-              <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
-            </div>
-            <div class="col">
-              <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
-            </div>
-            <div class="col-auto">
-              <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
-            </div>
-          </div>
-        `;
-        
-        await loadAllData();
-      } catch (error) {
-        showAlert('error', error.message || 'Failed to create invoice');
-      } finally {
-        hideLoading('createInvoiceBtn');
-      }
+      invoices.push(invoice);
+      
+      // Update client stats
+      client.invoiceCount++;
+      client.totalPaid += total;
+
+      e.target.reset();
+      document.getElementById("items").innerHTML = `
+        <div class="row line-item">
+          <div class="col"><input name="description" class="form-input" placeholder="Description" required></div>
+          <div class="col"><input type="number" name="quantity" class="form-input" placeholder="Qty" required></div>
+          <div class="col"><input type="number" step="0.01" name="price" class="form-input" placeholder="Price" required></div>
+          <div class="col-auto"><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button></div>
+        </div>
+      `;
+      
+      updateDashboard();
+      saveUserData();
+      alert("Invoice created successfully!");
     });
 
     function addItem() {
       const itemRow = document.createElement('div');
       itemRow.className = 'row line-item';
       itemRow.innerHTML = `
-        <div class="col">
-          <input name="description" class="form-input" placeholder="Item Description" required>
-        </div>
-        <div class="col">
-          <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
-        </div>
-        <div class="col">
-          <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
-        </div>
-        <div class="col-auto">
-          <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
-        </div>
+        <div class="col"><input name="description" class="form-input" placeholder="Description" required></div>
+        <div class="col"><input type="number" name="quantity" class="form-input" placeholder="Qty" required></div>
+        <div class="col"><input type="number" step="0.01" name="price" class="form-input" placeholder="Price" required></div>
+        <div class="col-auto"><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button></div>
       `;
       document.getElementById('items').appendChild(itemRow);
     }
@@ -1236,81 +1059,74 @@
       if (itemRows.length > 1) {
         button.closest('.line-item').remove();
       } else {
-        showAlert('error', 'At least one item is required');
+        alert("At least one item is required");
       }
     }
 
     function updateInvoiceHistoryTable() {
       const tbody = document.getElementById("invoiceHistoryTable");
       if (invoices.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No invoices yet</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No invoices yet</td></tr>';
         return;
       }
 
       tbody.innerHTML = invoices.map(invoice => `
         <tr>
-          <td><strong>#${invoice.id}</strong></td>
-          <td>${clients.find(c => c.id === invoice.clientId)?.name || 'Unknown Client'}</td>
-          <td>${new Date(invoice.createdAt).toLocaleDateString()}</td>
-          <td><span class="badge bg-warning">${invoice.taxPercent}%</span></td>
-          <td><strong>₹${invoice.total.toFixed(2)}</strong></td>
+          <td>${invoice.id}</td>
+          <td>${invoice.client.name}</td>
+          <td>${invoice.createdAt.toLocaleDateString()}</td>
+          <td>${invoice.taxPercent}%</td>
+          <td>₹${invoice.total.toFixed(2)}</td>
           <td>
             <div class="btn-group">
-              <button class="btn btn-sm btn-success" onclick="showInvoiceDetail(${invoice.id})" title="View Details">
-                View
-              </button>
-              <button class="btn btn-sm btn-info" onclick="printInvoice(${invoice.id})" title="Print">
-                Print
-              </button>
-              <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})" title="Delete">
-                Delete
-              </button>
+              <button class="btn btn-sm btn-success" onclick="showInvoiceDetail(${invoice.id})">View</button>
+              <button class="btn btn-sm btn-info" onclick="printInvoice(${invoice.id})">Print</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})">Delete</button>
             </div>
           </td>
         </tr>
       `).join("");
     }
 
-    async function deleteInvoice(invoiceId) {
+    function deleteInvoice(invoiceId) {
       if (confirm("Are you sure you want to delete this invoice?")) {
-        try {
-          await apiCall(`/api/invoices/${invoiceId}`, 'DELETE');
-          await loadAllData();
-        } catch (error) {
-          showAlert('error', error.message || 'Failed to delete invoice');
+        const invoice = invoices.find(inv => inv.id === invoiceId);
+        if (invoice) {
+          // Update client stats
+          const client = clients.find(c => c.id === invoice.client.id);
+          if (client) {
+            client.invoiceCount--;
+            client.totalPaid -= invoice.total;
+          }
         }
+        
+        invoices = invoices.filter(inv => inv.id !== invoiceId);
+        updateInvoiceHistoryTable();
+        updateDashboard();
+        saveUserData();
       }
     }
 
     function displayInvoiceDetail(invoiceId) {
       const invoice = invoices.find(inv => inv.id === invoiceId);
-      if (!invoice) {
-        showAlert('error', 'Invoice not found');
-        return;
-      }
-
-      const client = clients.find(c => c.id === invoice.clientId);
+      if (!invoice) return;
 
       // Update freelancer info
       document.getElementById("invoiceFreelancerInfo").innerHTML = `
-        <strong>${invoice.freelancerName}</strong><br>
-        📧 ${invoice.freelancerEmail}<br>
-        📍 ${invoice.freelancerAddress}
+        ${invoice.freelancerName}<br>
+        ${invoice.freelancerEmail}<br>
+        ${invoice.freelancerAddress}
       `;
 
       // Update client info
       document.getElementById("invoiceClientInfo").innerHTML = `
-        <strong>${client?.name || 'Unknown Client'}</strong><br>
-        📧 ${client?.email || 'N/A'}<br>
-        📍 ${client?.address || 'N/A'}
+        ${invoice.client.name}<br>
+        ${invoice.client.email}<br>
+        ${invoice.client.address}
       `;
 
       // Update invoice date
-      document.getElementById("invoiceDate").textContent = new Date(invoice.createdAt).toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+      document.getElementById("invoiceDate").textContent = invoice.createdAt.toLocaleDateString();
 
       // Update items table
       const itemsTable = document.getElementById("invoiceItemsTable");
@@ -1319,7 +1135,7 @@
           <td>${item.description}</td>
           <td>${item.quantity}</td>
           <td>₹${item.price.toFixed(2)}</td>
-          <td><strong>₹${(item.quantity * item.price).toFixed(2)}</strong></td>
+          <td>₹${(item.quantity * item.price).toFixed(2)}</td>
         </tr>
       `).join("");
 
@@ -1327,75 +1143,74 @@
       document.getElementById("invoiceSummary").innerHTML = `
         <p><strong>Subtotal:</strong> ₹${invoice.subtotal.toFixed(2)}</p>
         <p><strong>Tax (${invoice.taxPercent}%):</strong> ₹${invoice.taxAmount.toFixed(2)}</p>
-        <p><strong>Total Amount:</strong> ₹${invoice.total.toFixed(2)}</p>
+        <p><strong>Total:</strong> ₹${invoice.total.toFixed(2)}</p>
       `;
-
-      // Store current invoice ID for printing
-      window.currentPrintInvoiceId = invoiceId;
     }
 
     function printInvoice(invoiceId = null) {
       if (invoiceId) {
         showInvoiceDetail(invoiceId);
-        setTimeout(() => {
-          window.print();
-        }, 500);
-      } else if (window.currentPrintInvoiceId) {
+      }
+      setTimeout(() => {
         window.print();
-      } else {
-        showAlert('error', 'No invoice selected for printing');
-      }
+      }, 100);
     }
 
-    function updateDashboard(dashboardData) {
-      if (dashboardData) {
-        // Update stats from API response
-        document.getElementById("totalClients").textContent = dashboardData.totalClients || 0;
-        document.getElementById("totalInvoices").textContent = dashboardData.totalInvoices || 0;
-        document.getElementById("totalTax").textContent = `₹${(dashboardData.totalTax || 0).toFixed(2)}`;
-        document.getElementById("totalRevenue").textContent = `₹${(dashboardData.totalRevenue || 0).toFixed(2)}`;
+    function updateDashboard() {
+      // Update totals
+      document.getElementById("totalClients").textContent = clients.length;
+      document.getElementById("totalInvoices").textContent = invoices.length;
+      
+      const totalTax = invoices.reduce((sum, inv) => sum + inv.taxAmount, 0);
+      const totalRevenue = invoices.reduce((sum, inv) => sum + inv.total, 0);
+      
+      document.getElementById("totalTax").textContent = `₹${totalTax.toFixed(2)}`;
+      document.getElementById("totalRevenue").textContent = `₹${totalRevenue.toFixed(2)}`;
 
-        // Update client summary table
-        const tbody = document.getElementById("clientSummaryTable");
-        if (dashboardData.clientSummary && dashboardData.clientSummary.length > 0) {
-          tbody.innerHTML = dashboardData.clientSummary.map(client => `
-            <tr>
-              <td><strong>${client.name}</strong></td>
-              <td>${client.email}</td>
-              <td><span class="badge bg-primary">${client.invoiceCount}</span></td>
-              <td><strong>₹${client.totalPaid.toFixed(2)}</strong></td>
-            </tr>
-          `).join("");
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No clients yet</td></tr>';
-        }
+      // Update client summary table
+      const tbody = document.getElementById("clientSummaryTable");
+      if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No clients yet</td></tr>';
+        return;
       }
+
+      tbody.innerHTML = clients.map(client => `
+        <tr>
+          <td>${client.name}</td>
+          <td>${client.email}</td>
+          <td>${client.invoiceCount}</td>
+          <td>₹${client.totalPaid.toFixed(2)}</td>
+        </tr>
+      `).join("");
     }
-
-    // Input validation
-    document.getElementById("registerName")?.addEventListener("input", function () {
-      this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
-    });
-
-    document.getElementById("contactNumber")?.addEventListener("input", function () {
-      this.value = this.value.replace(/[^0-9]/g, "").slice(0, 15);
-    });
 
     // Initialize app
     document.addEventListener('DOMContentLoaded', function() {
+      // Load users from localStorage
+      loadUsers();
+      
+      // Initialize empty arrays for current session
+      clients = [];
+      invoices = [];
+      currentInvoiceId = 0;
+      
       // Auto-focus on email field
-      document.getElementById("username")?.focus();
+      document.getElementById("username").focus();
+      
+      updateDashboard();
     });
 
-    // Handle connection errors
-    window.addEventListener('online', function() {
+    // Auto-save user data periodically and when page is about to close
+    setInterval(() => {
       if (currentUser) {
-        loadAllData();
+        saveUserData();
       }
-    });
+    }, 30000); // Auto-save every 30 seconds
 
-    window.addEventListener('offline', function() {
-      showAlert('error', 'You are offline. Some features may not work properly.');
+    window.addEventListener('beforeunload', function() {
+      if (currentUser) {
+        saveUserData();
+      }
     });
   </script>
 
