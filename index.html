@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Freelancer Invoice Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Auth Styles */
+    .auth-body {
+      background: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+      
+    .auth-container {
+      width: 400px;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .login-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .register-bg {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .auth-container form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .auth-container input[type="text"],
+    .auth-container input[type="email"],
+    .auth-container input[type="password"],
+    .auth-container textarea {
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      color: #333;
+      background: rgba(255,255,255,0.9);
+      transition: background 0.3s ease;
+    }
+
+    .auth-container input:focus,
+    .auth-container textarea:focus {
+      background: rgba(255,255,255,1);
+    }
+
+    .auth-container textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .auth-container button {
+      padding: 12px;
+      background: #ffffff;
+      color: #333;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .auth-container button:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
+
+    .auth-container button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .link {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .link a {
+      color: #fff;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .link a:hover {
+      opacity: 0.8;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .alert {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .alert-error {
+      background: rgba(255, 107, 107, 0.9);
+      color: #fff;
+    }
+
+    .alert-success {
+      background: rgba(81, 207, 102, 0.9);
+      color: #fff;
+    }
+
+    /* Main App Styles */
+    .card {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      border: none;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card h5 {
+      font-weight: 600;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+    }
+
+    /* Dashboard Cards */
+    .stats-card {
+      background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+      color: white;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stats-card-primary { --card-color-1: #667eea; --card-color-2: #764ba2; }
+    .stats-card-success { --card-color-1: #11998e; --card-color-2: #38ef7d; }
+    .stats-card-warning { --card-color-1: #f093fb; --card-color-2: #f5576c; }
+    .stats-card-info { --card-color-1: #4facfe; --card-color-2: #00f2fe; }
+
+    /* Client & Invoice Styles */
+    .client-container, .invoice-container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .client-container h2, .invoice-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      border: none;
+      border-radius: 8px;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      border: none;
+      border-radius: 8px;
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border: none;
+      border-radius: 8px;
+    }
+
+    /* Table Styles */
+    .table thead th {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border: none;
+      font-weight: 500;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    /* Invoice Styles */
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .sub-title {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #34495e;
+      font-weight: 500;
+    }
+
+    .form-section {
+      margin-top: 20px;
+    }
+
+    .form-box {
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    .line-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .btn-outline {
+      background-color: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      background-color: #667eea;
+      color: white;
+    }
+
+    /* Invoice Detail Styles */
+    .invoice-box {
+      background: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .invoice-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 28px;
+    }
+
+    .invoice-box h4 {
+      margin-bottom: 8px;
+      color: #34495e;
+      font-weight: 500;
+    }
+
+    .info-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      gap: 20px;
+    }
+
+    .info-box {
+      flex: 1;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .invoice-box table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .invoice-box table thead {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #fff;
+    }
+
+    .invoice-box th, .invoice-box td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .summary {
+      text-align: right;
+      font-size: 16px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .summary p {
+      margin: 8px 0;
+      font-weight: 500;
+    }
+
+    .summary p:last-child {
+      font-size: 18px;
+      color: #2c3e50;
+      font-weight: 600;
+      border-top: 2px solid #667eea;
+      padding-top: 10px;
+    }
+
+    .btn-download {
+      display: inline-block;
+      padding: 12px 25px;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+      color: white;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .auth-container {
+        width: 90%;
+        margin: 20px;
+      }
+
+      .info-section {
+        flex-direction: column;
+      }
+
+      .line-item {
+        flex-wrap: wrap;
+      }
+
+      .line-item .col {
+        min-width: 150px;
+      }
+    }
+
+    @media print {
+      .btn-download, nav, .no-print, .btn {
+        display: none !important;
+      }
+      
+      .invoice-box {
+        box-shadow: none;
+        padding: 20px;
+      }
+      
+      body {
+        background: white;
+      }
+    }
+
+    /* Navbar Enhancement */
+    .navbar-dark .navbar-brand {
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+
+    .navbar-dark .nav-link:hover {
+      color: #fff !important;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 5px;
+    }
+
+    /* Animation for page transitions */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUTHENTICATION SECTION -->
+  <div id="authSection" class="auth-body">
+    <!-- LOGIN FORM -->
+    <div class="auth-container login-bg" id="loginBox">
+      <form id="loginForm" onsubmit="login(event)">
+        <h2>Welcome Back</h2>
+        <input type="email" id="username" placeholder="Email Address" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" id="loginBtn">
+          <span class="btn-text">Sign In</span>
+          <span class="spinner hidden"></span>
+        </button>
+        <div id="error"></div>
+        <div id="success"></div>
+        <div class="link">
+          <small>Demo: demo@example.com / demo123</small>
+        </div>
+        <div class="link">Don't have an account? <a onclick="showRegister()">Sign up</a></div>
+      </form>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-container register-bg hidden" id="registerBox">
+      <form id="registerForm" onsubmit="register(event)">
+        <h2>Create Account</h2>
+        <input type="text" id="registerName" placeholder="Full Name" required />
+        <input type="email" id="registerEmail" placeholder="Email Address" required />
+        <input type="password" id="registerPassword" placeholder="Password (min 6 chars)" required minlength="6" />
+        <input type="text" id="contactNumber" placeholder="Contact Number" required />
+        <textarea id="address" placeholder="Address" required rows="3"></textarea>
+        <button type="submit" id="registerBtn">
+          <span class="btn-text">Create Account</span>
+          <span class="spinner hidden"></span>
+        </button>
+        <div id="registerError"></div>
+        <div id="registerSuccess"></div>
+        <div class="link">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION SECTION -->
+  <div id="mainApp" class="hidden">
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark no-print sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" onclick="showDashboard()">
+          📊 Invoice Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showDashboard()">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showNewInvoice()">New Invoice</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showInvoiceHistory()">Invoices</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showClients()">Clients</a></li>
+          </ul>
+          <span class="navbar-text me-3">
+            👤 <strong id="currentUserName">User</strong>
+          </span>
+          <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardSection" class="container mt-4 fade-in">
+      <h2 class="text-center mb-4 text-dark">Dashboard Overview</h2>
+      
+      <div class="row g-4 mb-4">
+        <div class="col-md-3">
+          <div class="stats-card stats-card-primary">
+            <h5>Total Clients</h5>
+            <h2 id="totalClients">0</h2>
+            <small>Active clients</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stats-card stats-card-success">
+            <h5>Total Invoices</h5>
+            <h2 id="totalInvoices">0</h2>
+            <small>Generated invoices</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stats-card stats-card-warning">
+            <h5>Total Tax</h5>
+            <h2 id="totalTax">₹0</h2>
+            <small>Tax collected</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stats-card stats-card-info">
+            <h5>Total Revenue</h5>
+            <h2 id="totalRevenue">₹0</h2>
+            <small>Total earnings</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">📈 Client Summary</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover m-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Client Name</th>
+                  <th>Email</th>
+                  <th>Total Invoices</th>
+                  <th>Total Amount Paid</th>
+                </tr>
+              </thead>
+              <tbody id="clientSummaryTable">
+                <tr><td colspan="4" class="text-center text-muted">No clients yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS SECTION -->
+    <div id="clientsSection" class="container mt-4 hidden fade-in">
+      <div class="client-container">
+        <h2>👥 Client Management</h2>
+
+        <form id="clientForm" class="client-form mb-4">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <input name="name" class="form-control" placeholder="Client Name" required>
+            </div>
+            <div class="col-md-3">
+              <input name="email" type="email" class="form-control" placeholder="Email Address" required>
+            </div>
+            <div class="col-md-4">
+              <textarea name="address" class="form-control" placeholder="Complete Address" rows="1" required></textarea>
+            </div>
+            <div class="col-md-2 d-grid">
+              <button type="submit" class="btn btn-success" id="addClientBtn">
+                <span class="btn-text">Add Client</span>
+                <span class="spinner hidden"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Invoices</th>
+                <th>Total Paid</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTable">
+              <tr><td colspan="6" class="text-center text-muted">No clients yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW INVOICE SECTION -->
+    <div id="newInvoiceSection" class="container mt-4 hidden fade-in">
+      <div class="client-container">
+        <h2 class="section-title">📄 Create New Invoice</h2>
+
+        <form id="invoiceForm" class="form-section">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-box">
+                <h5 class="sub-title">Your Information</h5>
+                <input type="text" name="freelancer_name" class="form-input" placeholder="Your Full Name" required>
+                <input type="email" name="freelancer_email" class="form-input" placeholder="Your Email Address" required>
+                <textarea name="freelancer_address" class="form-input" rows="3" placeholder="Your Complete Address" required></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-box">
+                <h5 class="sub-title">Client Information</h5>
+                <select name="client_id" class="form-input" required id="clientSelect">
+                  <option disabled selected>Select Client</option>
+                </select>
+                <div class="mt-2">
+                  <small class="text-muted">Don't see your client? <a href="#" onclick="showClients()" class="text-primary">Add them first</a></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-box">
+            <h5 class="sub-title mt-4">📝 Invoice Items</h5>
+            <div id="items">
+              <div class="row line-item">
+                <div class="col">
+                  <input name="description" class="form-input" placeholder="Item Description" required>
+                </div>
+                <div class="col">
+                  <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
+                </div>
+                <div class="col">
+                  <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
+                </div>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="addItem()" class="btn-outline mb-3">+ Add Another Item</button>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Tax Percentage (%)</label>
+                <input type="number" step="0.01" name="tax_percent" class="form-input" placeholder="e.g., 18" min="0" max="100" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg" id="createInvoiceBtn">
+              <span class="btn-text">📄 Create Invoice</span>
+              <span class="spinner hidden"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- INVOICE HISTORY SECTION -->
+    <div id="invoiceHistorySection" class="container mt-4 hidden fade-in">
+      <div class="invoice-container">
+        <h2>📋 Invoice History</h2>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Tax (%)</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceHistoryTable">
+              <tr><td colspan="6" class="text-center text-muted">No invoices yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVOICE DETAIL SECTION -->
+    <div id="invoiceDetailSection" class="container mt-4 hidden fade-in">
+      <div class="invoice-box">
+        <h2>📄 Invoice Details</h2>
+
+        <div class="info-section">
+          <div class="info-box">
+            <h4>From:</h4>
+            <div id="invoiceFreelancerInfo">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+          <div class="info-box">
+            <h4>To:</h4>
+            <div id="invoiceClientInfo">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box mb-4">
+          <h4>Invoice Date:</h4>
+          <p id="invoiceDate" class="mb-0"><!-- Dynamic content --></p>
+        </div>
+
+        <div>
+          <h4>Items:</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceItemsTable">
+              <!-- Dynamic content -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary" id="invoiceSummary">
+          <!-- Dynamic content -->
+        </div>
+
+        <div class="text-center mt-4 no-print">
+          <button onclick="printInvoice()" class="btn-download me-2">🖨️ Print Invoice</button>
+          <button onclick="showInvoiceHistory()" class="btn btn-secondary">← Back to History</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Global variables
+    let clients = [];
+    let invoices = [];
+    let currentUser = null;
+    let authToken = null;
+
+    // API Base URL - automatically detects if running locally or on server
+    const API_BASE_URL = window.location.origin;
+
+    // Utility functions
+    function showLoading(buttonId) {
+      const button = document.getElementById(buttonId);
+      const btnText = button.querySelector('.btn-text');
+      const spinner = button.querySelector('.spinner');
+      
+      btnText.style.display = 'none';
+      spinner.classList.remove('hidden');
+      button.disabled = true;
+    }
+
+    function hideLoading(buttonId, originalText = null) {
+      const button = document.getElementById(buttonId);
+      const btnText = button.querySelector('.btn-text');
+      const spinner = button.querySelector('.spinner');
+      
+      if (originalText) btnText.textContent = originalText;
+      btnText.style.display = 'inline';
+      spinner.classList.add('hidden');
+      button.disabled = false;
+    }
+
+    function showAlert(elementId, message, type = 'error') {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      element.textContent = message;
+      element.className = `alert alert-${type}`;
+      element.style.display = 'block';
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        element.style.display = 'none';
+      }, 5000);
+    }
+
+    function clearAlerts() {
+      const alertIds = ['error', 'success', 'registerError', 'registerSuccess'];
+      alertIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.style.display = 'none';
+          element.textContent = '';
+        }
+      });
+    }
+
+    // API functions
+    async function apiCall(endpoint, method = 'GET', data = null) {
+      const config = {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+
+      if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+      }
+
+      if (data) {
+        config.body = JSON.stringify(data);
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'API request failed');
+        }
+        
+        return result;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // Authentication functions
+    const authSection = document.getElementById("authSection");
+    const mainApp = document.getElementById("mainApp");
+    const loginBox = document.getElementById("loginBox");
+    const registerBox = document.getElementById("registerBox");
+
+    function showRegister() {
+      loginBox.classList.add("hidden");
+      registerBox.classList.remove("hidden");
+      clearAlerts();
+    }
+
+    function showLogin() {
+      loginBox.classList.remove("hidden");
+      registerBox.classList.add("hidden");
+      clearAlerts();
+    }
+
+    async function register(e) {
+      e.preventDefault();
+      showLoading('registerBtn');
+      
+      const formData = new FormData(e.target);
+      const userData = {
+        name: formData.get('registerName') || document.getElementById('registerName').value,
+        email: formData.get('registerEmail') || document.getElementById('registerEmail').value,
+        password: formData.get('registerPassword') || document.getElementById('registerPassword').value,
+        contactNumber: formData.get('contactNumber') || document.getElementById('contactNumber').value,
+        address: formData.get('address') || document.getElementById('address').value
+      };
+
+      try {
+        const response = await apiCall('/api/auth/register', 'POST', userData);
+        showAlert('registerSuccess', 'Registration successful! You can now login.', 'success');
+        document.getElementById('registerForm').reset();
+        
+        // Auto switch to login after 2 seconds
+        setTimeout(() => {
+          showLogin();
+        }, 2000);
+      } catch (error) {
+        showAlert('registerError', error.message || 'Registration failed. Please try again.');
+      } finally {
+        hideLoading('registerBtn');
+      }
+    }
+
+    async function login(e) {
+      e.preventDefault();
+      showLoading('loginBtn');
+      
+      const email = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await apiCall('/api/auth/login', 'POST', { email, password });
+        
+        currentUser = response.user;
+        authToken = response.token;
+        
+        authSection.classList.add("hidden");
+        mainApp.classList.remove("hidden");
+        document.body.classList.remove("auth-body");
+        
+        // Update navbar with user name
+        document.getElementById("currentUserName").textContent = currentUser.name;
+        
+        // Load user data
+        await loadAllData();
+        showDashboard();
+        
+      } catch (error) {
+        showAlert('error', error.message || 'Login failed. Please check your credentials.');
+      } finally {
+        hideLoading('loginBtn');
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      authToken = null;
+      
+      authSection.classList.remove("hidden");
+      mainApp.classList.add("hidden");
+      document.body.classList.add("auth-body");
+      showLogin();
+      clearAlerts();
+      
+      // Reset forms and data
+      document.getElementById("loginForm").reset();
+      clients = [];
+      invoices = [];
+    }
+
+    // Data loading functions
+    async function loadAllData() {
+      try {
+        await Promise.all([
+          loadClients(),
+          loadInvoices(),
+          loadDashboardData()
+        ]);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    async function loadClients() {
+      try {
+        clients = await apiCall('/api/clients');
+        updateClientsTable();
+        updateClientSelect();
+      } catch (error) {
+        console.error('Error loading clients:', error);
+        clients = [];
+      }
+    }
+
+    async function loadInvoices() {
+      try {
+        invoices = await apiCall('/api/invoices');
+        updateInvoiceHistoryTable();
+      } catch (error) {
+        console.error('Error loading invoices:', error);
+        invoices = [];
+      }
+    }
+
+    async function loadDashboardData() {
+      try {
+        const dashboardData = await apiCall('/api/dashboard');
+        updateDashboard(dashboardData);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+
+    // Navigation functions
+    function showDashboard() {
+      hideAllSections();
+      document.getElementById("dashboardSection").classList.remove("hidden");
+      loadDashboardData();
+    }
+
+    function showClients() {
+      hideAllSections();
+      document.getElementById("clientsSection").classList.remove("hidden");
+      loadClients();
+    }
+
+    function showNewInvoice() {
+      hideAllSections();
+      document.getElementById("newInvoiceSection").classList.remove("hidden");
+      updateClientSelect();
+    }
+
+    function showInvoiceHistory() {
+      hideAllSections();
+      document.getElementById("invoiceHistorySection").classList.remove("hidden");
+      loadInvoices();
+    }
+
+    function showInvoiceDetail(invoiceId) {
+      hideAllSections();
+      document.getElementById("invoiceDetailSection").classList.remove("hidden");
+      displayInvoiceDetail(invoiceId);
+    }
+
+    function hideAllSections() {
+      const sections = ["dashboardSection", "clientsSection", "newInvoiceSection", "invoiceHistorySection", "invoiceDetailSection"];
+      sections.forEach(section => {
+        document.getElementById(section).classList.add("hidden");
+      });
+    }
+
+    // Client management
+    document.getElementById("clientForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      showLoading('addClientBtn');
+      
+      const formData = new FormData(e.target);
+      const clientData = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        address: formData.get("address")
+      };
+
+      try {
+        const response = await apiCall('/api/clients', 'POST', clientData);
+        e.target.reset();
+        await loadClients();
+        await loadDashboardData();
+      } catch (error) {
+        showAlert('error', error.message || 'Failed to add client');
+      } finally {
+        hideLoading('addClientBtn');
+      }
+    });
+
+    function updateClientsTable() {
+      const tbody = document.getElementById("clientsTable");
+      if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No clients yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = clients.map(client => `
+        <tr>
+          <td>${client.name}</td>
+          <td>${client.email}</td>
+          <td>${client.address}</td>
+          <td><span class="badge bg-primary">${client.invoiceCount || 0}</span></td>
+          <td><strong>₹${(client.totalPaid || 0).toFixed(2)}</strong></td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="deleteClient(${client.id})">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function deleteClient(clientId) {
+      if (confirm("Are you sure you want to delete this client? This will also delete all related invoices.")) {
+        try {
+          await apiCall(`/api/clients/${clientId}`, 'DELETE');
+          await loadClients();
+          await loadDashboardData();
+        } catch (error) {
+          showAlert('error', error.message || 'Failed to delete client');
+        }
+      }
+    }
+
+    function updateClientSelect() {
+      const select = document.getElementById("clientSelect");
+      select.innerHTML = '<option disabled selected>Select Client</option>';
+      clients.forEach(client => {
+        select.innerHTML += `<option value="${client.id}">${client.name} - ${client.email}</option>`;
+      });
+    }
+
+    // Invoice management
+    document.getElementById("invoiceForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      showLoading('createInvoiceBtn');
+      
+      const formData = new FormData(e.target);
+      
+      // Get all line items
+      const itemRows = document.querySelectorAll("#items .line-item");
+      const lineItems = [];
+      
+      itemRows.forEach(row => {
+        const description = row.querySelector('input[name="description"]').value;
+        const quantity = parseFloat(row.querySelector('input[name="quantity"]').value);
+        const price = parseFloat(row.querySelector('input[name="price"]').value);
+        
+        if (description && quantity && price) {
+          lineItems.push({
+            description: description,
+            quantity: quantity,
+            price: price
+          });
+        }
+      });
+
+      if (lineItems.length === 0) {
+        showAlert('error', 'Please add at least one valid line item');
+        hideLoading('createInvoiceBtn');
+        return;
+      }
+
+      const invoiceData = {
+        freelancerName: formData.get("freelancer_name"),
+        freelancerEmail: formData.get("freelancer_email"),
+        freelancerAddress: formData.get("freelancer_address"),
+        clientId: parseInt(formData.get("client_id")),
+        lineItems: lineItems,
+        taxPercent: parseFloat(formData.get("tax_percent"))
+      };
+
+      try {
+        const response = await apiCall('/api/invoices', 'POST', invoiceData);
+        e.target.reset();
+        
+        // Reset line items to default
+        document.getElementById("items").innerHTML = `
+          <div class="row line-item">
+            <div class="col">
+              <input name="description" class="form-input" placeholder="Item Description" required>
+            </div>
+            <div class="col">
+              <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
+            </div>
+            <div class="col">
+              <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+            </div>
+          </div>
+        `;
+        
+        await loadAllData();
+      } catch (error) {
+        showAlert('error', error.message || 'Failed to create invoice');
+      } finally {
+        hideLoading('createInvoiceBtn');
+      }
+    });
+
+    function addItem() {
+      const itemRow = document.createElement('div');
+      itemRow.className = 'row line-item';
+      itemRow.innerHTML = `
+        <div class="col">
+          <input name="description" class="form-input" placeholder="Item Description" required>
+        </div>
+        <div class="col">
+          <input type="number" name="quantity" class="form-input" placeholder="Quantity" min="1" required>
+        </div>
+        <div class="col">
+          <input type="number" step="0.01" name="price" class="form-input" placeholder="Price per unit" min="0" required>
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+        </div>
+      `;
+      document.getElementById('items').appendChild(itemRow);
+    }
+
+    function removeItem(button) {
+      const itemRows = document.querySelectorAll("#items .line-item");
+      if (itemRows.length > 1) {
+        button.closest('.line-item').remove();
+      } else {
+        showAlert('error', 'At least one item is required');
+      }
+    }
+
+    function updateInvoiceHistoryTable() {
+      const tbody = document.getElementById("invoiceHistoryTable");
+      if (invoices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No invoices yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = invoices.map(invoice => `
+        <tr>
+          <td><strong>#${invoice.id}</strong></td>
+          <td>${clients.find(c => c.id === invoice.clientId)?.name || 'Unknown Client'}</td>
+          <td>${new Date(invoice.createdAt).toLocaleDateString()}</td>
+          <td><span class="badge bg-warning">${invoice.taxPercent}%</span></td>
+          <td><strong>₹${invoice.total.toFixed(2)}</strong></td>
+          <td>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-success" onclick="showInvoiceDetail(${invoice.id})" title="View Details">
+                View
+              </button>
+              <button class="btn btn-sm btn-info" onclick="printInvoice(${invoice.id})" title="Print">
+                Print
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})" title="Delete">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function deleteInvoice(invoiceId) {
+      if (confirm("Are you sure you want to delete this invoice?")) {
+        try {
+          await apiCall(`/api/invoices/${invoiceId}`, 'DELETE');
+          await loadAllData();
+        } catch (error) {
+          showAlert('error', error.message || 'Failed to delete invoice');
+        }
+      }
+    }
+
+    function displayInvoiceDetail(invoiceId) {
+      const invoice = invoices.find(inv => inv.id === invoiceId);
+      if (!invoice) {
+        showAlert('error', 'Invoice not found');
+        return;
+      }
+
+      const client = clients.find(c => c.id === invoice.clientId);
+
+      // Update freelancer info
+      document.getElementById("invoiceFreelancerInfo").innerHTML = `
+        <strong>${invoice.freelancerName}</strong><br>
+        📧 ${invoice.freelancerEmail}<br>
+        📍 ${invoice.freelancerAddress}
+      `;
+
+      // Update client info
+      document.getElementById("invoiceClientInfo").innerHTML = `
+        <strong>${client?.name || 'Unknown Client'}</strong><br>
+        📧 ${client?.email || 'N/A'}<br>
+        📍 ${client?.address || 'N/A'}
+      `;
+
+      // Update invoice date
+      document.getElementById("invoiceDate").textContent = new Date(invoice.createdAt).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      // Update items table
+      const itemsTable = document.getElementById("invoiceItemsTable");
+      itemsTable.innerHTML = invoice.lineItems.map(item => `
+        <tr>
+          <td>${item.description}</td>
+          <td>${item.quantity}</td>
+          <td>₹${item.price.toFixed(2)}</td>
+          <td><strong>₹${(item.quantity * item.price).toFixed(2)}</strong></td>
+        </tr>
+      `).join("");
+
+      // Update summary
+      document.getElementById("invoiceSummary").innerHTML = `
+        <p><strong>Subtotal:</strong> ₹${invoice.subtotal.toFixed(2)}</p>
+        <p><strong>Tax (${invoice.taxPercent}%):</strong> ₹${invoice.taxAmount.toFixed(2)}</p>
+        <p><strong>Total Amount:</strong> ₹${invoice.total.toFixed(2)}</p>
+      `;
+
+      // Store current invoice ID for printing
+      window.currentPrintInvoiceId = invoiceId;
+    }
+
+    function printInvoice(invoiceId = null) {
+      if (invoiceId) {
+        showInvoiceDetail(invoiceId);
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      } else if (window.currentPrintInvoiceId) {
+        window.print();
+      } else {
+        showAlert('error', 'No invoice selected for printing');
+      }
+    }
+
+    function updateDashboard(dashboardData) {
+      if (dashboardData) {
+        // Update stats from API response
+        document.getElementById("totalClients").textContent = dashboardData.totalClients || 0;
+        document.getElementById("totalInvoices").textContent = dashboardData.totalInvoices || 0;
+        document.getElementById("totalTax").textContent = `₹${(dashboardData.totalTax || 0).toFixed(2)}`;
+        document.getElementById("totalRevenue").textContent = `₹${(dashboardData.totalRevenue || 0).toFixed(2)}`;
+
+        // Update client summary table
+        const tbody = document.getElementById("clientSummaryTable");
+        if (dashboardData.clientSummary && dashboardData.clientSummary.length > 0) {
+          tbody.innerHTML = dashboardData.clientSummary.map(client => `
+            <tr>
+              <td><strong>${client.name}</strong></td>
+              <td>${client.email}</td>
+              <td><span class="badge bg-primary">${client.invoiceCount}</span></td>
+              <td><strong>₹${client.totalPaid.toFixed(2)}</strong></td>
+            </tr>
+          `).join("");
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No clients yet</td></tr>';
+        }
+      }
+    }
+
+    // Input validation
+    document.getElementById("registerName")?.addEventListener("input", function () {
+      this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
+    });
+
+    document.getElementById("contactNumber")?.addEventListener("input", function () {
+      this.value = this.value.replace(/[^0-9]/g, "").slice(0, 15);
+    });
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      // Auto-focus on email field
+      document.getElementById("username")?.focus();
+    });
+
+    // Handle connection errors
+    window.addEventListener('online', function() {
+      if (currentUser) {
+        loadAllData();
+      }
+    });
+
+    window.addEventListener('offline', function() {
+      showAlert('error', 'You are offline. Some features may not work properly.');
+    });
+  </script>
+
+</body>
+</html>
