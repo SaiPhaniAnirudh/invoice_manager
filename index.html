@@ -86,6 +86,11 @@
       background: #fbe9e7;
     }
 
+    .auth-container button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .link {
       margin-top: 10px;
       text-align: center;
@@ -115,6 +120,12 @@
 
     #success {
       color: #51cf66;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #fff;
     }
 
     /* Main App Styles */
@@ -350,7 +361,7 @@
         <h2>Login</h2>
         <input type="email" id="username" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
-        <button type="submit">Login</button>
+        <button type="submit" id="loginBtn">Login</button>
         <div id="error"></div>
         <div id="success"></div>
         <div class="link"><a onclick="showForgot()">Forgot Password?</a></div>
@@ -367,7 +378,7 @@
         <input type="password" id="registerPassword" placeholder="Password" required minlength="6" />
         <input type="text" id="contactNumber" placeholder="Contact Number" required maxlength="10" />
         <textarea id="address" placeholder="Address" required></textarea>
-        <button type="submit">Sign Up</button>
+        <button type="submit" id="registerBtn">Sign Up</button>
         <div id="registerError"></div>
         <div id="registerSuccess"></div>
         <div class="link">Already have an account? <a onclick="showLogin()">Login</a></div>
@@ -379,7 +390,7 @@
       <form id="forgotForm" onsubmit="forgotPassword(event)">
         <h2>Reset Password</h2>
         <input type="email" id="forgotEmail" placeholder="Enter your email" required />
-        <button type="submit">Send Reset Link</button>
+        <button type="submit" id="forgotBtn">Send Reset Link</button>
         <div id="forgotError"></div>
         <div id="forgotSuccess"></div>
         <div class="link"><a onclick="showLogin()">Back to Login</a></div>
@@ -627,38 +638,95 @@
     let clients = [];
     let invoices = [];
     let currentInvoiceId = 0;
-    let users = []; // Store registered users
-    let currentUser = null; // Store logged in user
+    let users = [];
+    let currentUser = null;
 
-    // LocalStorage keys
+    // Storage keys
     const STORAGE_KEYS = {
-      USERS: 'invoice_manager_users',
-      USER_DATA: 'invoice_manager_user_data_'
+      USERS: 'invoice_users',
+      USER_DATA_PREFIX: 'user_data_'
     };
 
-    // Load users from localStorage
-    function loadUsers() {
+    // ============================================
+    // STORAGE FUNCTIONS (using window.storage)
+    // ============================================
+
+    async function loadUsers() {
       try {
-        const storedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
-        if (storedUsers) {
-          users = JSON.parse(storedUsers);
+        const result = await window.storage.get(STORAGE_KEYS.USERS, false);
+        if (result && result.value) {
+          users = JSON.parse(result.value);
+        } else {
+          users = [];
         }
       } catch (error) {
-        console.error('Error loading users:', error);
+        console.log('No users found, starting fresh');
         users = [];
       }
     }
 
-    // Save users to localStorage
-    function saveUsers() {
+    async function saveUsers() {
       try {
-        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+        await window.storage.set(STORAGE_KEYS.USERS, JSON.stringify(users), false);
       } catch (error) {
         console.error('Error saving users:', error);
       }
     }
 
-    // Authentication functions
+    async function loadUserData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDataKey = STORAGE_KEYS.USER_DATA_PREFIX + currentUser.id;
+        const result = await window.storage.get(userDataKey, false);
+        
+        if (result && result.value) {
+          const userData = JSON.parse(result.value);
+          clients = userData.clients || [];
+          invoices = userData.invoices || [];
+          currentInvoiceId = userData.currentInvoiceId || 0;
+          
+          // Convert date strings back to Date objects
+          invoices.forEach(invoice => {
+            if (typeof invoice.createdAt === 'string') {
+              invoice.createdAt = new Date(invoice.createdAt);
+            }
+          });
+        } else {
+          // Initialize empty data for new user
+          clients = [];
+          invoices = [];
+          currentInvoiceId = 0;
+        }
+      } catch (error) {
+        console.log('No user data found, starting fresh');
+        clients = [];
+        invoices = [];
+        currentInvoiceId = 0;
+      }
+    }
+
+    async function saveUserData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDataKey = STORAGE_KEYS.USER_DATA_PREFIX + currentUser.id;
+        const userData = {
+          clients: clients,
+          invoices: invoices,
+          currentInvoiceId: currentInvoiceId,
+          lastSaved: new Date().toISOString()
+        };
+        await window.storage.set(userDataKey, JSON.stringify(userData), false);
+      } catch (error) {
+        console.error('Error saving user data:', error);
+      }
+    }
+
+    // ============================================
+    // AUTHENTICATION FUNCTIONS
+    // ============================================
+
     const authSection = document.getElementById("authSection");
     const mainApp = document.getElementById("mainApp");
     const loginBox = document.getElementById("loginBox");
@@ -695,8 +763,12 @@
       document.getElementById("forgotSuccess").textContent = "";
     }
 
-    function register(e) {
+    async function register(e) {
       e.preventDefault();
+      const btn = document.getElementById("registerBtn");
+      btn.disabled = true;
+      btn.textContent = "Registering...";
+
       const name = document.getElementById("registerName").value.trim();
       const email = document.getElementById("registerEmail").value.trim();
       const password = document.getElementById("registerPassword").value;
@@ -706,20 +778,31 @@
       // Validation
       if (!/^[a-zA-Z\s]+$/.test(name)) {
         document.getElementById("registerError").textContent = "Name must contain only alphabets and spaces.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
         return;
       }
       if (!/^\d{10}$/.test(contact)) {
         document.getElementById("registerError").textContent = "Contact number must be exactly 10 digits.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
         return;
       }
       if (password.length < 6) {
         document.getElementById("registerError").textContent = "Password must be at least 6 characters long.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
         return;
       }
+
+      // Load users first
+      await loadUsers();
 
       // Check if email already exists
       if (users.find(user => user.email === email)) {
         document.getElementById("registerError").textContent = "Email already registered. Please use a different email.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
         return;
       }
 
@@ -728,30 +811,40 @@
         id: users.length + 1,
         name: name,
         email: email,
-        password: password, // In a real app, this should be hashed
+        password: password,
         contact: contact,
         address: address,
-        registeredAt: new Date()
+        registeredAt: new Date().toISOString()
       };
 
       users.push(newUser);
-      saveUsers(); // Save to localStorage
+      await saveUsers();
       
       document.getElementById("registerSuccess").textContent = "Registration successful! You can now login.";
       document.getElementById("registerError").textContent = "";
       document.getElementById("registerForm").reset();
       
+      btn.disabled = false;
+      btn.textContent = "Sign Up";
+
       // Auto switch to login after 2 seconds
       setTimeout(() => {
         showLogin();
       }, 2000);
     }
 
-    function login(e) {
+    async function login(e) {
       e.preventDefault();
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
       const email = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
       const errorBox = document.getElementById("error");
+
+      // Load users first
+      await loadUsers();
 
       // Find user
       const user = users.find(u => u.email === email && u.password === password);
@@ -766,7 +859,7 @@
         document.getElementById("currentUserName").textContent = user.name;
         
         // Load user-specific data
-        loadUserData();
+        await loadUserData();
         showDashboard();
         updateDashboard();
         
@@ -776,26 +869,37 @@
         errorBox.textContent = "Invalid email or password. Please check your credentials.";
         document.getElementById("success").textContent = "";
       }
+
+      btn.disabled = false;
+      btn.textContent = "Login";
     }
 
-    function forgotPassword(e) {
+    async function forgotPassword(e) {
       e.preventDefault();
+      const btn = document.getElementById("forgotBtn");
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+
       const email = document.getElementById("forgotEmail").value.trim();
       
+      await loadUsers();
       const user = users.find(u => u.email === email);
+      
       if (user) {
         document.getElementById("forgotSuccess").textContent = `Password reset instructions sent to ${email}`;
         document.getElementById("forgotError").textContent = "";
-        // In a real app, you would send an actual email here
       } else {
         document.getElementById("forgotError").textContent = "Email not found. Please register first.";
         document.getElementById("forgotSuccess").textContent = "";
       }
+
+      btn.disabled = false;
+      btn.textContent = "Send Reset Link";
     }
 
-    function logout() {
+    async function logout() {
       // Save user-specific data before logout
-      saveUserData();
+      await saveUserData();
       
       currentUser = null;
       authSection.classList.remove("hidden");
@@ -808,59 +912,10 @@
       document.getElementById("loginForm").reset();
     }
 
-    function loadUserData() {
-      if (!currentUser) return;
-      
-      try {
-        const userDataKey = STORAGE_KEYS.USER_DATA + currentUser.id;
-        const storedData = localStorage.getItem(userDataKey);
-        
-        if (storedData) {
-          const userData = JSON.parse(storedData);
-          clients = userData.clients || [];
-          invoices = userData.invoices || [];
-          currentInvoiceId = userData.currentInvoiceId || 0;
-          
-          // Convert date strings back to Date objects
-          invoices.forEach(invoice => {
-            if (typeof invoice.createdAt === 'string') {
-              invoice.createdAt = new Date(invoice.createdAt);
-            }
-          });
-        } else {
-          // Initialize empty data for new user
-          clients = [];
-          invoices = [];
-          currentInvoiceId = 0;
-        }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        clients = [];
-        invoices = [];
-        currentInvoiceId = 0;
-      }
-    }
+    // ============================================
+    // INPUT VALIDATION
+    // ============================================
 
-    function saveUserData() {
-      if (!currentUser) return;
-      
-      try {
-        const userDataKey = STORAGE_KEYS.USER_DATA + currentUser.id;
-        const userData = {
-          clients: clients,
-          invoices: invoices,
-          currentInvoiceId: currentInvoiceId,
-          lastSaved: new Date().toISOString()
-        };
-        localStorage.setItem(userDataKey, JSON.stringify(userData));
-      } catch (error) {
-        console.error('Error saving user data:', error);
-      }
-    }
-
-    // Remove the old userDataStore functions since we're using localStorage now
-
-    // Name validation — allow only letters and spaces
     const nameInput = document.getElementById("registerName");
     nameInput?.addEventListener("input", function () {
       const valid = /^[a-zA-Z\s]*$/.test(this.value);
@@ -869,7 +924,6 @@
       }
     });
 
-    // Contact validation — allow only numbers
     const contactInput = document.getElementById("contactNumber");
     contactInput?.addEventListener("input", function () {
       const valid = /^[0-9]*$/.test(this.value);
@@ -878,7 +932,10 @@
       }
     });
 
-    // Navigation functions
+    // ============================================
+    // NAVIGATION FUNCTIONS
+    // ============================================
+
     function showDashboard() {
       hideAllSections();
       document.getElementById("dashboardSection").classList.remove("hidden");
@@ -915,8 +972,11 @@
       });
     }
 
-    // Client management
-    document.getElementById("clientForm").addEventListener("submit", function(e) {
+    // ============================================
+    // CLIENT MANAGEMENT
+    // ============================================
+
+    document.getElementById("clientForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       const formData = new FormData(e.target);
       const client = {
@@ -932,7 +992,7 @@
       e.target.reset();
       updateClientsTable();
       updateDashboard();
-      saveUserData();
+      await saveUserData();
       alert("Client added successfully!");
     });
 
@@ -955,13 +1015,13 @@
       `).join("");
     }
 
-    function deleteClient(clientId) {
+    async function deleteClient(clientId) {
       if (confirm("Are you sure you want to delete this client?")) {
         clients = clients.filter(c => c.id !== clientId);
         updateClientsTable();
         updateDashboard();
         updateClientSelect();
-        saveUserData();
+        await saveUserData();
       }
     }
 
@@ -973,8 +1033,11 @@
       });
     }
 
-    // Invoice management
-    document.getElementById("invoiceForm").addEventListener("submit", function(e) {
+    // ============================================
+    // INVOICE MANAGEMENT
+    // ============================================
+
+    document.getElementById("invoiceForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       const formData = new FormData(e.target);
       
@@ -1038,7 +1101,7 @@
       `;
       
       updateDashboard();
-      saveUserData();
+      await saveUserData();
       alert("Invoice created successfully!");
     });
 
@@ -1088,7 +1151,7 @@
       `).join("");
     }
 
-    function deleteInvoice(invoiceId) {
+    async function deleteInvoice(invoiceId) {
       if (confirm("Are you sure you want to delete this invoice?")) {
         const invoice = invoices.find(inv => inv.id === invoiceId);
         if (invoice) {
@@ -1103,7 +1166,7 @@
         invoices = invoices.filter(inv => inv.id !== invoiceId);
         updateInvoiceHistoryTable();
         updateDashboard();
-        saveUserData();
+        await saveUserData();
       }
     }
 
@@ -1184,10 +1247,13 @@
       `).join("");
     }
 
-    // Initialize app
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load users from localStorage
-      loadUsers();
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Load users from storage
+      await loadUsers();
       
       // Initialize empty arrays for current session
       clients = [];
@@ -1200,16 +1266,16 @@
       updateDashboard();
     });
 
-    // Auto-save user data periodically and when page is about to close
-    setInterval(() => {
+    // Auto-save user data periodically
+    setInterval(async () => {
       if (currentUser) {
-        saveUserData();
+        await saveUserData();
       }
     }, 30000); // Auto-save every 30 seconds
 
-    window.addEventListener('beforeunload', function() {
+    window.addEventListener('beforeunload', async function() {
       if (currentUser) {
-        saveUserData();
+        await saveUserData();
       }
     });
   </script>
