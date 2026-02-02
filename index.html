@@ -114,12 +114,20 @@
       margin-top: 10px;
     }
 
-    #error {
+    #error, #registerError, #forgotError {
       color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
     }
 
-    #success {
+    #success, #registerSuccess, #forgotSuccess {
       color: #51cf66;
+      background: rgba(81, 207, 102, 0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
     }
 
     .loading {
@@ -362,8 +370,8 @@
         <input type="email" id="username" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
         <button type="submit" id="loginBtn">Login</button>
-        <div id="error"></div>
-        <div id="success"></div>
+        <div id="error" class="hidden"></div>
+        <div id="success" class="hidden"></div>
         <div class="link"><a onclick="showForgot()">Forgot Password?</a></div>
         <div class="link">Don't have an account? <a onclick="showRegister()">Sign up</a></div>
       </form>
@@ -379,8 +387,8 @@
         <input type="text" id="contactNumber" placeholder="Contact Number" required maxlength="10" />
         <textarea id="address" placeholder="Address" required></textarea>
         <button type="submit" id="registerBtn">Sign Up</button>
-        <div id="registerError"></div>
-        <div id="registerSuccess"></div>
+        <div id="registerError" class="hidden"></div>
+        <div id="registerSuccess" class="hidden"></div>
         <div class="link">Already have an account? <a onclick="showLogin()">Login</a></div>
       </form>
     </div>
@@ -391,8 +399,8 @@
         <h2>Reset Password</h2>
         <input type="email" id="forgotEmail" placeholder="Enter your email" required />
         <button type="submit" id="forgotBtn">Send Reset Link</button>
-        <div id="forgotError"></div>
-        <div id="forgotSuccess"></div>
+        <div id="forgotError" class="hidden"></div>
+        <div id="forgotSuccess" class="hidden"></div>
         <div class="link"><a onclick="showLogin()">Back to Login</a></div>
       </form>
     </div>
@@ -647,29 +655,68 @@
       USER_DATA_PREFIX: 'user_data_'
     };
 
+    // Check if storage is available
+    function checkStorage() {
+      // Try window.storage first (Claude.ai)
+      if (typeof window.storage !== 'undefined') {
+        console.log('Using window.storage (Claude.ai)');
+        return 'window.storage';
+      }
+      // Fall back to localStorage
+      try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        console.log('Using localStorage');
+        return 'localStorage';
+      } catch (e) {
+        console.error('No storage available!');
+        alert('Storage is not available in your browser. The app may not work correctly.');
+        return null;
+      }
+    }
+
+    const storageType = checkStorage();
+
     // ============================================
-    // STORAGE FUNCTIONS (using window.storage)
+    // STORAGE FUNCTIONS (Auto-detect storage type)
     // ============================================
 
     async function loadUsers() {
       try {
-        const result = await window.storage.get(STORAGE_KEYS.USERS, false);
-        if (result && result.value) {
-          users = JSON.parse(result.value);
+        let data;
+        if (storageType === 'window.storage') {
+          const result = await window.storage.get(STORAGE_KEYS.USERS, false);
+          data = result && result.value ? result.value : null;
+        } else {
+          data = localStorage.getItem(STORAGE_KEYS.USERS);
+        }
+        
+        if (data) {
+          users = JSON.parse(data);
+          console.log('Loaded users:', users.length);
         } else {
           users = [];
+          console.log('No users found');
         }
       } catch (error) {
-        console.log('No users found, starting fresh');
+        console.log('Error loading users:', error);
         users = [];
       }
     }
 
     async function saveUsers() {
       try {
-        await window.storage.set(STORAGE_KEYS.USERS, JSON.stringify(users), false);
+        const data = JSON.stringify(users);
+        if (storageType === 'window.storage') {
+          await window.storage.set(STORAGE_KEYS.USERS, data, false);
+        } else {
+          localStorage.setItem(STORAGE_KEYS.USERS, data);
+        }
+        console.log('Saved users:', users.length);
+        return true;
       } catch (error) {
         console.error('Error saving users:', error);
+        return false;
       }
     }
 
@@ -678,10 +725,17 @@
       
       try {
         const userDataKey = STORAGE_KEYS.USER_DATA_PREFIX + currentUser.id;
-        const result = await window.storage.get(userDataKey, false);
+        let data;
         
-        if (result && result.value) {
-          const userData = JSON.parse(result.value);
+        if (storageType === 'window.storage') {
+          const result = await window.storage.get(userDataKey, false);
+          data = result && result.value ? result.value : null;
+        } else {
+          data = localStorage.getItem(userDataKey);
+        }
+        
+        if (data) {
+          const userData = JSON.parse(data);
           clients = userData.clients || [];
           invoices = userData.invoices || [];
           currentInvoiceId = userData.currentInvoiceId || 0;
@@ -692,14 +746,16 @@
               invoice.createdAt = new Date(invoice.createdAt);
             }
           });
+          console.log('Loaded user data: clients=', clients.length, 'invoices=', invoices.length);
         } else {
           // Initialize empty data for new user
           clients = [];
           invoices = [];
           currentInvoiceId = 0;
+          console.log('No user data found, initialized empty');
         }
       } catch (error) {
-        console.log('No user data found, starting fresh');
+        console.log('Error loading user data:', error);
         clients = [];
         invoices = [];
         currentInvoiceId = 0;
@@ -707,7 +763,7 @@
     }
 
     async function saveUserData() {
-      if (!currentUser) return;
+      if (!currentUser) return false;
       
       try {
         const userDataKey = STORAGE_KEYS.USER_DATA_PREFIX + currentUser.id;
@@ -717,9 +773,18 @@
           currentInvoiceId: currentInvoiceId,
           lastSaved: new Date().toISOString()
         };
-        await window.storage.set(userDataKey, JSON.stringify(userData), false);
+        const data = JSON.stringify(userData);
+        
+        if (storageType === 'window.storage') {
+          await window.storage.set(userDataKey, data, false);
+        } else {
+          localStorage.setItem(userDataKey, data);
+        }
+        console.log('Saved user data');
+        return true;
       } catch (error) {
         console.error('Error saving user data:', error);
+        return false;
       }
     }
 
@@ -755,16 +820,31 @@
     }
 
     function clearMessages() {
-      document.getElementById("error").textContent = "";
-      document.getElementById("success").textContent = "";
-      document.getElementById("registerError").textContent = "";
-      document.getElementById("registerSuccess").textContent = "";
-      document.getElementById("forgotError").textContent = "";
-      document.getElementById("forgotSuccess").textContent = "";
+      const errorIds = ["error", "success", "registerError", "registerSuccess", "forgotError", "forgotSuccess"];
+      errorIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = "";
+        el.classList.add("hidden");
+      });
+    }
+
+    function showError(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.classList.remove("hidden");
+      console.error(elementId + ':', message);
+    }
+
+    function showSuccess(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.classList.remove("hidden");
+      console.log(elementId + ':', message);
     }
 
     async function register(e) {
       e.preventDefault();
+      console.log('Registration started');
       const btn = document.getElementById("registerBtn");
       btn.disabled = true;
       btn.textContent = "Registering...";
@@ -775,32 +855,35 @@
       const contact = document.getElementById("contactNumber").value.trim();
       const address = document.getElementById("address").value.trim();
 
+      console.log('Form data:', { name, email, contact: contact.length, password: password.length });
+
       // Validation
       if (!/^[a-zA-Z\s]+$/.test(name)) {
-        document.getElementById("registerError").textContent = "Name must contain only alphabets and spaces.";
+        showError("registerError", "Name must contain only alphabets and spaces.");
         btn.disabled = false;
         btn.textContent = "Sign Up";
         return;
       }
       if (!/^\d{10}$/.test(contact)) {
-        document.getElementById("registerError").textContent = "Contact number must be exactly 10 digits.";
+        showError("registerError", "Contact number must be exactly 10 digits.");
         btn.disabled = false;
         btn.textContent = "Sign Up";
         return;
       }
       if (password.length < 6) {
-        document.getElementById("registerError").textContent = "Password must be at least 6 characters long.";
+        showError("registerError", "Password must be at least 6 characters long.");
         btn.disabled = false;
         btn.textContent = "Sign Up";
         return;
       }
 
       // Load users first
+      console.log('Loading existing users...');
       await loadUsers();
 
       // Check if email already exists
       if (users.find(user => user.email === email)) {
-        document.getElementById("registerError").textContent = "Email already registered. Please use a different email.";
+        showError("registerError", "Email already registered. Please use a different email.");
         btn.disabled = false;
         btn.textContent = "Sign Up";
         return;
@@ -808,7 +891,7 @@
 
       // Create new user
       const newUser = {
-        id: users.length + 1,
+        id: Date.now(),
         name: name,
         email: email,
         password: password,
@@ -817,40 +900,57 @@
         registeredAt: new Date().toISOString()
       };
 
+      console.log('Creating new user:', newUser.email);
       users.push(newUser);
-      await saveUsers();
       
-      document.getElementById("registerSuccess").textContent = "Registration successful! You can now login.";
-      document.getElementById("registerError").textContent = "";
-      document.getElementById("registerForm").reset();
+      console.log('Saving users...');
+      const saved = await saveUsers();
+      
+      if (saved) {
+        console.log('Registration successful!');
+        showSuccess("registerSuccess", "Registration successful! You can now login.");
+        document.getElementById("registerForm").reset();
+        
+        // Auto switch to login after 2 seconds
+        setTimeout(() => {
+          showLogin();
+        }, 2000);
+      } else {
+        console.error('Failed to save user');
+        showError("registerError", "Registration failed. Please try again.");
+      }
       
       btn.disabled = false;
       btn.textContent = "Sign Up";
-
-      // Auto switch to login after 2 seconds
-      setTimeout(() => {
-        showLogin();
-      }, 2000);
     }
 
     async function login(e) {
       e.preventDefault();
+      console.log('Login started');
       const btn = document.getElementById("loginBtn");
       btn.disabled = true;
       btn.textContent = "Logging in...";
 
       const email = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
-      const errorBox = document.getElementById("error");
+
+      console.log('Attempting login for:', email);
 
       // Load users first
       await loadUsers();
+      console.log('Total users in system:', users.length);
 
       // Find user
       const user = users.find(u => u.email === email && u.password === password);
 
       if (user) {
+        console.log('User found:', user.email);
         currentUser = user;
+        
+        // Load user-specific data first
+        await loadUserData();
+        
+        // Then show the app
         authSection.classList.add("hidden");
         mainApp.classList.remove("hidden");
         document.body.classList.remove("auth-body");
@@ -858,16 +958,15 @@
         // Update navbar with user name
         document.getElementById("currentUserName").textContent = user.name;
         
-        // Load user-specific data
-        await loadUserData();
+        // Show dashboard and update UI
         showDashboard();
         updateDashboard();
         
-        document.getElementById("success").textContent = "Login successful!";
-        errorBox.textContent = "";
+        showSuccess("success", "Login successful!");
+        console.log('Login successful');
       } else {
-        errorBox.textContent = "Invalid email or password. Please check your credentials.";
-        document.getElementById("success").textContent = "";
+        console.log('User not found or password incorrect');
+        showError("error", "Invalid email or password. Please check your credentials.");
       }
 
       btn.disabled = false;
@@ -886,11 +985,9 @@
       const user = users.find(u => u.email === email);
       
       if (user) {
-        document.getElementById("forgotSuccess").textContent = `Password reset instructions sent to ${email}`;
-        document.getElementById("forgotError").textContent = "";
+        showSuccess("forgotSuccess", `Password reset instructions sent to ${email}`);
       } else {
-        document.getElementById("forgotError").textContent = "Email not found. Please register first.";
-        document.getElementById("forgotSuccess").textContent = "";
+        showError("forgotError", "Email not found. Please register first.");
       }
 
       btn.disabled = false;
@@ -898,10 +995,17 @@
     }
 
     async function logout() {
+      console.log('Logout started');
       // Save user-specific data before logout
-      await saveUserData();
+      if (currentUser) {
+        await saveUserData();
+      }
       
       currentUser = null;
+      clients = [];
+      invoices = [];
+      currentInvoiceId = 0;
+      
       authSection.classList.remove("hidden");
       mainApp.classList.add("hidden");
       document.body.classList.add("auth-body");
@@ -910,6 +1014,7 @@
       
       // Reset forms
       document.getElementById("loginForm").reset();
+      console.log('Logout complete');
     }
 
     // ============================================
@@ -980,7 +1085,7 @@
       e.preventDefault();
       const formData = new FormData(e.target);
       const client = {
-        id: clients.length + 1,
+        id: Date.now(),
         name: formData.get("name"),
         email: formData.get("email"),
         address: formData.get("address"),
@@ -1252,32 +1357,22 @@
     // ============================================
 
     document.addEventListener('DOMContentLoaded', async function() {
+      console.log('App initialized');
+      console.log('Storage type:', storageType);
+      
       // Load users from storage
       await loadUsers();
       
-      // Initialize empty arrays for current session
-      clients = [];
-      invoices = [];
-      currentInvoiceId = 0;
-      
       // Auto-focus on email field
       document.getElementById("username").focus();
-      
-      updateDashboard();
     });
 
-    // Auto-save user data periodically
+    // Auto-save user data periodically (only if user is logged in)
     setInterval(async () => {
       if (currentUser) {
         await saveUserData();
       }
     }, 30000); // Auto-save every 30 seconds
-
-    window.addEventListener('beforeunload', async function() {
-      if (currentUser) {
-        await saveUserData();
-      }
-    });
   </script>
 
 </body>
